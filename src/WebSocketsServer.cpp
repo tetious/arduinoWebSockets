@@ -619,7 +619,6 @@ void WebSocketsServer::handleNewClients(void) {
 
 #if (WEBSOCKETS_NETWORK_TYPE == NETWORK_ESP8266) || (WEBSOCKETS_NETWORK_TYPE == NETWORK_ESP32)
         delay(0);
-    }
 #endif
 
 }
@@ -633,13 +632,12 @@ void WebSocketsServer::handleClientData(void) {
     WSclient_t * client;
     for(uint8_t i = 0; i < WEBSOCKETS_SERVER_CLIENT_MAX; i++) {
         client = &_clients[i];
-        if(clientIsConnected(client)) {
+        if (clientIsConnected(client)) {
             int len = client->tcp->available();
-            if(len > 0) {
+            if (len > 0) {
                 //DEBUG_WEBSOCKETS("[WS-Server][%d][handleClientData] len: %d\n", client->num, len);
-                switch(client->status) {
-                    case WSC_HEADER:
-                    {
+                switch (client->status) {
+                    case WSC_HEADER: {
                         String headerLine = client->tcp->readStringUntil('\n');
                         handleHeader(client, &headerLine);
                     }
