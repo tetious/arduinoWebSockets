@@ -48,6 +48,11 @@
 #define NODEBUG_WEBSOCKETS
 #endif
 
+#ifdef ESP32
+#define WEBSOCKETS_MAX_DATA_SIZE  (32*1024)
+#define WEBSOCKETS_USE_BIG_MEM
+#define GET_FREE_HEAP ESP.getFreeHeap()
+#else
 #ifdef ESP8266
 #define WEBSOCKETS_MAX_DATA_SIZE  (15*1024)
 #define WEBSOCKETS_USE_BIG_MEM
@@ -64,6 +69,7 @@
 #define WEBSOCKETS_MAX_DATA_SIZE  (1024)
 // moves all Header strings to Flash
 #define WEBSOCKETS_SAVE_RAM
+#endif
 #endif
 #endif
 
