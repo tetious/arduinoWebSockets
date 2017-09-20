@@ -75,40 +75,41 @@
 
 #define WEBSOCKETS_TCP_TIMEOUT    (2000)
 
-#define NETWORK_ESP8266_ASYNC   (0)
-#define NETWORK_ESP8266         (1)
-#define NETWORK_W5100           (2)
-#define NETWORK_ENC28J60        (3)
-#define NETWORK_ESP32           (4)
+#define NETWORK_ESP_ASYNC   (0)
+#define NETWORK_ESP         (1)
+#define NETWORK_W5100       (2)
+#define NETWORK_ENC28J60    (3)
 
 // max size of the WS Message Header
 #define WEBSOCKETS_MAX_HEADER_SIZE  (14)
 
 #if !defined(WEBSOCKETS_NETWORK_TYPE) 
 // select Network type based
-#if defined(ESP8266) || defined(ESP31B)
-#define WEBSOCKETS_NETWORK_TYPE NETWORK_ESP8266
-//#define WEBSOCKETS_NETWORK_TYPE NETWORK_ESP8266_ASYNC
+#if defined(ESP8266) || defined(ESP31B) || defined(ESP32)
+#define WEBSOCKETS_NETWORK_TYPE NETWORK_ESP
+//#define WEBSOCKETS_NETWORK_TYPE NETWORK_ESP_ASYNC
 //#define WEBSOCKETS_NETWORK_TYPE NETWORK_W5100
-#elif defined(ESP32)
-#define WEBSOCKETS_NETWORK_TYPE NETWORK_ESP32
 #else
 #define WEBSOCKETS_NETWORK_TYPE NETWORK_W5100
 #endif
 #endif
 
-#if (WEBSOCKETS_NETWORK_TYPE == NETWORK_ESP8266_ASYNC)
+#if (WEBSOCKETS_NETWORK_TYPE == NETWORK_ESP_ASYNC)
 
 // Note:
 //   No SSL/WSS support for client in Async mode
 //   TLS lib need a sync interface!
 
-#if !defined(ESP8266) && !defined(ESP31B)
-#error "network type ESP8266 ASYNC only possible on the ESP mcu!"
+#if !defined(ESP8266) && !defined(ESP31B) && !defined(ESP32)
+#error "network type ESP_ASYNC only possible on the ESP mcu!"
 #endif
 
 #ifdef ESP8266
 #include <ESP8266WiFi.h>
+#elif defined(ESP32)
+#include <WiFi.h>
+#include <WiFiClientSecure.h>
+
 #else
 #include <ESP31BWiFi.h>
 #endif
@@ -117,14 +118,16 @@
 #define WEBSOCKETS_NETWORK_CLASS AsyncTCPbuffer
 #define WEBSOCKETS_NETWORK_SERVER_CLASS AsyncServer
 
-#elif (WEBSOCKETS_NETWORK_TYPE == NETWORK_ESP8266)
-
-#if !defined(ESP8266) && !defined(ESP31B)
-#error "network type ESP8266 only possible on the ESP mcu!"
+#elif (WEBSOCKETS_NETWORK_TYPE == NETWORK_ESP)
+#if !defined(ESP8266) && !defined(ESP31B)  && !defined(ESP32)
+#error "network type ESP only possible on the ESP mcu!"
 #endif
 
 #ifdef ESP8266
 #include <ESP8266WiFi.h>
+#elif defined(ESP32)
+#include <WiFi.h>
+#include <WiFiClientSecure.h>
 #else
 #include <ESP31BWiFi.h>
 #endif
@@ -148,13 +151,6 @@
 #include <UIPEthernet.h>
 #define WEBSOCKETS_NETWORK_CLASS UIPClient
 #define WEBSOCKETS_NETWORK_SERVER_CLASS UIPServer
-
-#elif (WEBSOCKETS_NETWORK_TYPE == NETWORK_ESP32)
-
-#include <WiFi.h>
-#include <WiFiClientSecure.h>
-#define WEBSOCKETS_NETWORK_CLASS WiFiClient
-#define WEBSOCKETS_NETWORK_SERVER_CLASS WiFiServer
 
 #else
 #error "no network type selected!"
@@ -220,7 +216,7 @@ typedef struct {
 
         bool isSocketIO;    ///< client for socket.io server
 
-#if (WEBSOCKETS_NETWORK_TYPE == NETWORK_ESP8266) || (WEBSOCKETS_NETWORK_TYPE == NETWORK_ESP32)
+#if (WEBSOCKETS_NETWORK_TYPE == NETWORK_ESP)
         bool isSSL;             ///< run in ssl mode
         WiFiClientSecure * ssl;
 #endif
@@ -250,7 +246,7 @@ typedef struct {
         bool cHttpHeadersValid; ///< non-websocket http header validity indicator
         size_t cMandatoryHeadersCount; ///< non-websocket mandatory http headers present count
 
-#if (WEBSOCKETS_NETWORK_TYPE == NETWORK_ESP8266_ASYNC)
+#if (WEBSOCKETS_NETWORK_TYPE == NETWORK_ESP_ASYNC)
         String cHttpLine;   ///< HTTP header lines
 #endif
 

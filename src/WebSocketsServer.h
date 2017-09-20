@@ -48,7 +48,7 @@ public:
 
         void begin(void);
 
-#if (WEBSOCKETS_NETWORK_TYPE != NETWORK_ESP8266_ASYNC)
+#if (WEBSOCKETS_NETWORK_TYPE != NETWORK_ESP_ASYNC)
         void loop(void);
 #else
         // Async interface not need a loop call
@@ -92,7 +92,7 @@ public:
         void setAuthorization(const char * user, const char * password);
         void setAuthorization(const char * auth);
 
-#if (WEBSOCKETS_NETWORK_TYPE == NETWORK_ESP8266) || (WEBSOCKETS_NETWORK_TYPE == NETWORK_ESP8266_ASYNC) || (WEBSOCKETS_NETWORK_TYPE == NETWORK_ESP32)
+#if (WEBSOCKETS_NETWORK_TYPE == NETWORK_ESP) || (WEBSOCKETS_NETWORK_TYPE == NETWORK_ESP_ASYNC)
         IPAddress remoteIP(uint8_t num);
 #endif
 
@@ -118,7 +118,7 @@ protected:
         void clientDisconnect(WSclient_t * client);
         bool clientIsConnected(WSclient_t * client);
 
-#if (WEBSOCKETS_NETWORK_TYPE != NETWORK_ESP8266_ASYNC)
+#if (WEBSOCKETS_NETWORK_TYPE != NETWORK_ESP_ASYNC)
         void handleNewClients(void);
         void handleClientData(void);
 #endif
